@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/sintori-san/ws/private/authSec/Auth.API/Auth.API.csproj": {}
+    "/home/sintori-san/ws/private/AuthPresentation/Auth.API/Auth.API.csproj": {}
   },
   "projects": {
-    "/home/sintori-san/ws/private/authSec/Auth.API/Auth.API.csproj": {
+    "/home/sintori-san/ws/private/AuthPresentation/Auth.API/Auth.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/sintori-san/ws/private/authSec/Auth.API/Auth.API.csproj",
+        "projectUniqueName": "/home/sintori-san/ws/private/AuthPresentation/Auth.API/Auth.API.csproj",
         "projectName": "Auth.API",
-        "projectPath": "/home/sintori-san/ws/private/authSec/Auth.API/Auth.API.csproj",
+        "projectPath": "/home/sintori-san/ws/private/AuthPresentation/Auth.API/Auth.API.csproj",
         "packagesPath": "/home/sintori-san/.nuget/packages/",
-        "outputPath": "/home/sintori-san/ws/private/authSec/Auth.API/obj/",
+        "outputPath": "/home/sintori-san/ws/private/AuthPresentation/Auth.API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/sintori-san/.nuget/NuGet/NuGet.Config"
@@ -20,7 +20,7 @@
           "net10.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
+          "/usr/share/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -45,9 +45,31 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.1.0, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[10.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[10.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[10.0.5, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[10.0.5, )"
+            },
+            "Scalar.AspNetCore": {
+              "target": "Package",
+              "version": "[2.13.22, )"
             }
           },
           "imports": [
@@ -69,7 +91,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.105/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.104/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
