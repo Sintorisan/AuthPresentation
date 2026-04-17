@@ -9,7 +9,7 @@ public static class BasicAuthEndpoints
     {
         var group = app.MapGroup("/api/v1");
 
-        group.MapPost("/auth/register", async (RegisterDtoV1 dto, AuthService auth) =>
+        group.MapPost("/auth/register", async (RegisterDto dto, AuthService auth) =>
         {
             if (auth.IsExistingUser(dto.Email))
             {
@@ -20,18 +20,13 @@ public static class BasicAuthEndpoints
             return Results.Ok(result);
         });
 
-        group.MapPost("/auth/login", async (LoginDtoV1 dto, AuthService auth) =>
+        group.MapPost("/auth/login", async (LoginDto dto, AuthService auth) =>
         {
-            var user = await auth.GetUserByEmailAsync(dto.Email);
+            var user = await auth.ValidateUser(dto);
             if (user == null)
-            {
-                return Results.BadRequest("Non-existing user");
-            }
-            if (!auth.IsCorrectPassword(dto.Password, user.PasswordHash))
             {
                 return Results.Unauthorized();
             }
-
             var result = await auth.CreateV1Response(user);
             return Results.Ok(result);
         });

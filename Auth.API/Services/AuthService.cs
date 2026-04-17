@@ -20,7 +20,7 @@ public class AuthService
         return await _userRepository.GetUserByEmailAsync(email);
     }
 
-    public async Task<bool> RegisterAsync(RegisterDtoV1 dto)
+    public async Task<bool> RegisterAsync(RegisterDto dto)
     {
         var user = new User
         {
@@ -31,6 +31,16 @@ public class AuthService
 
         await _userRepository.RegisterUserAsync(user);
         return true;
+    }
+
+    public async Task<User?> ValidateUser(LoginDto dto)
+    {
+        var user = await _userRepository.GetUserByEmailAsync(dto.Email);
+
+        if (user == null)
+            return null;
+
+        return IsCorrectPassword(dto.Password, user.PasswordHash) ? user : null;
     }
 
     public async Task<V1Response> CreateV1Response(User user)

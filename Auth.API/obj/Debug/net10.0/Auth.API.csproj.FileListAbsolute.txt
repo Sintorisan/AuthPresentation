@@ -149,3 +149,8 @@
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/obj/Debug/net10.0/Auth.API.pdb
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/obj/Debug/net10.0/Auth.API.genruntimeconfig.cache
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/obj/Debug/net10.0/ref/Auth.API.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.Abstractions.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.Logging.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/System.IdentityModel.Tokens.Jwt.dll

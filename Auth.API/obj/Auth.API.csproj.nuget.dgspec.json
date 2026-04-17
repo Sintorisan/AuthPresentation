@@ -70,6 +70,10 @@
             "Scalar.AspNetCore": {
               "target": "Package",
               "version": "[2.13.22, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.17.0, )"
             }
           },
           "imports": [

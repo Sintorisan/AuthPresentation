@@ -1,11 +1,11 @@
 namespace Auth.API.Models.Dtos;
 
-public record RegisterDtoV1(
+public record RegisterDto(
     string Email,
     string Password
     );
 
-public record LoginDtoV1(
+public record LoginDto(
     string Email,
     string Password
     );

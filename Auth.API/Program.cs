@@ -13,8 +13,23 @@ builder.Services.AddDbContext<UserDbContext>(opt =>
   opt.UseSqlite("Data Source=app.db")
 );
 
+builder.Services.AddCors(opt =>
+    {
+        opt.AddPolicy("Frontend", policy =>
+        {
+            policy
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowAnyOrigin()
+            // .WithOrigins("http://localhost:5173")
+            // .AllowCredentials()
+            ;
+        });
+    });
+
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
@@ -30,8 +45,12 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-app.MapBasicAuthEndpoints();
 app.UseHttpsRedirection();
+
+app.UseCors("Frontend");
+
+app.MapBasicAuthEndpoints();
+app.MapJwtAuthEndpoints();
 
 app.Run();
 
