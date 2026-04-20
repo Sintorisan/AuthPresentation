@@ -235,9 +235,9 @@ a8f3k2l9fj2...93jf0as...`}
             {JSON.stringify(decoded.payload, null, 2)}
           </pre>
 
-          <p>Header beskriver signering.</p>
-          <p>Payload innehåller användardata.</p>
-          <p>Token är signerad, inte krypterad.</p>
+          <p>Header = hur tokenen är signerad</p>
+          <p>Payload = information om användaren</p>
+          <p>Signature = serverns sätt att verifiera att tokenen inte har ändrats</p>
         </>
       )}
 
@@ -308,7 +308,6 @@ Authorization: Bearer eyJhbGciOi...`}
             Hur löser vi detta utan att störa användaren?
           </p>
 
-          <p><strong>→ Refresh tokens</strong></p>
         </>
       )}
 

@@ -1,17 +1,30 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using Auth.API.Infrastructure.Repositories;
+using Auth.API.Models.Entities;
 using Microsoft.IdentityModel.Tokens;
 
 
 namespace Auth.API.Services;
 
-public class JwtService
+public class TokenService
 {
+    private readonly TokenRepository _tokenRepository;
+
+
     private readonly string _issuer = "authDemo";
     private readonly string _key = "mysupersecretsuperkeyfornoonetofigureout";
 
-    public string GenerateToken(string userId, bool includeExp)
+
+    public TokenService(TokenRepository tokenRepository)
+    {
+        _tokenRepository = tokenRepository;
+    }
+
+
+    public string GenerateToken(string userId, bool includeExp = true)
     {
         var claims = new[]
         {
@@ -60,6 +73,46 @@ public class JwtService
         {
             return false;
         }
+    }
+
+    public async Task<string> GenerateRefresh(string userId)
+    {
+        var randomBytes = new byte[64];
+
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomBytes);
+
+        var token = Convert.ToBase64String(randomBytes);
+
+        await RegisterRefreshToken(token, userId);
+
+        return token;
+    }
+
+    private async Task RegisterRefreshToken(string token, string userId)
+    {
+        var refreshToken = new RefreshToken
+        {
+            Token = token,
+            UserId = userId,
+            ExpTime = DateTime.UtcNow.AddDays(7)
+        };
+
+        await _tokenRepository.AddTokenAsync(refreshToken);
+    }
+
+    public async Task<RefreshToken?> ValidateRefreshToken(string refreshToken)
+    {
+        var existingRefreshToken = await _tokenRepository.GetRefreshTokenAsync(refreshToken);
+        if (existingRefreshToken == null)
+        {
+            return null;
+        }
+        if (existingRefreshToken.ExpTime < DateTime.UtcNow)
+        {
+            return null;
+        }
+        return existingRefreshToken;
     }
 }
 

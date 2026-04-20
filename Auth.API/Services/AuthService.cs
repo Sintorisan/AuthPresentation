@@ -2,23 +2,19 @@ using Auth.API.Models.Dtos;
 using Auth.API.Models.Entities;
 using Auth.API.Infrastructure.Repositories;
 
-
 namespace Auth.API.Services;
 
 public class AuthService
 {
     private readonly UserRepository _userRepository;
+    private readonly TokenService _tokenService;
 
-    public AuthService(UserRepository userRepository)
+    public AuthService(UserRepository userRepository, TokenService tokenService)
     {
         _userRepository = userRepository;
+        _tokenService = tokenService;
     }
 
-
-    public async Task<User?> GetUserByEmailAsync(string email)
-    {
-        return await _userRepository.GetUserByEmailAsync(email);
-    }
 
     public async Task<bool> RegisterAsync(RegisterDto dto)
     {

@@ -23,6 +23,10 @@
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Relational.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Sqlite.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.Extensions.DependencyModel.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.Abstractions.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.Logging.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.OpenApi.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.VisualStudio.SolutionPersistence.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Mono.TextTemplating.dll
@@ -37,6 +41,7 @@
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/System.Composition.Hosting.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/System.Composition.Runtime.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/System.Composition.TypedParts.dll
+/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/System.IdentityModel.Tokens.Jwt.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/cs/Microsoft.CodeAnalysis.resources.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/de/Microsoft.CodeAnalysis.resources.dll
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/es/Microsoft.CodeAnalysis.resources.dll
@@ -149,8 +154,3 @@
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/obj/Debug/net10.0/Auth.API.pdb
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/obj/Debug/net10.0/Auth.API.genruntimeconfig.cache
 /home/sintori-san/ws/private/AuthPresentation/Auth.API/obj/Debug/net10.0/ref/Auth.API.dll
-/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.Abstractions.dll
-/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.JsonWebTokens.dll
-/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.Logging.dll
-/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll
-/home/sintori-san/ws/private/AuthPresentation/Auth.API/bin/Debug/net10.0/System.IdentityModel.Tokens.Jwt.dll

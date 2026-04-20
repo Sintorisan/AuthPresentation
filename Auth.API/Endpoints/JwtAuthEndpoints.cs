@@ -9,7 +9,7 @@ public static class JwtAuthEndpoints
     {
         var group = app.MapGroup("api/v2");
 
-        group.MapPost("/auth/non-exp-login", async (LoginDto dto, AuthService auth, JwtService jwt) =>
+        group.MapPost("/auth/non-exp-login", async (LoginDto dto, AuthService auth, TokenService jwt) =>
         {
             var user = await auth.ValidateUser(dto);
             if (user == null)
@@ -22,7 +22,7 @@ public static class JwtAuthEndpoints
             return Results.Ok(new { token });
         });
 
-        group.MapGet("/auth/protected-no-exp", (HttpContext ctx, JwtService jwt) =>
+        group.MapGet("/auth/protected-no-exp", (HttpContext ctx, TokenService jwt) =>
         {
             var authHeader = ctx.Request.Headers["Authorization"].FirstOrDefault();
 
@@ -31,12 +31,12 @@ public static class JwtAuthEndpoints
 
             var token = authHeader.Split(" ").Last();
 
-            var isValid = jwt.ValidateToken(token, false); // 👈 ignore lifetime
+            var isValid = jwt.ValidateToken(token, false);
 
             return isValid ? Results.Ok("Valid (no exp)") : Results.Unauthorized();
         });
 
-        group.MapPost("/auth/exp-login", async (LoginDto dto, AuthService auth, JwtService jwt) =>
+        group.MapPost("/auth/exp-login", async (LoginDto dto, AuthService auth, TokenService jwt) =>
         {
             var user = await auth.ValidateUser(dto);
             if (user == null)
@@ -49,7 +49,7 @@ public static class JwtAuthEndpoints
             return Results.Ok(new { token });
         });
 
-        group.MapGet("/auth/protected", (HttpContext ctx, JwtService jwt) =>
+        group.MapGet("/auth/protected", (HttpContext ctx, TokenService jwt) =>
         {
             var authHeader = ctx.Request.Headers["Authorization"].FirstOrDefault();
 

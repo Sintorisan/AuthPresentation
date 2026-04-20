@@ -28,8 +28,9 @@ builder.Services.AddCors(opt =>
     });
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<TokenRepository>();
 
 var app = builder.Build();
 
@@ -45,12 +46,12 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors("Frontend");
+app.UseHttpsRedirection();
 
 app.MapBasicAuthEndpoints();
 app.MapJwtAuthEndpoints();
+app.MapRefreshAuthEndpoints();
 
 app.Run();
 
