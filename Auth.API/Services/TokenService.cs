@@ -114,6 +114,37 @@ public class TokenService
         }
         return existingRefreshToken;
     }
+
+    public string GenerateTokenWithRole(User user)
+    {
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var tokenDescriptor = new JwtSecurityToken(
+            issuer: _issuer,
+            audience: _issuer,
+            claims: claims,
+            signingCredentials: creds,
+            expires: DateTime.UtcNow.AddDays(1)
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+    }
+
+    public bool HasRoleOf(string token, params string[] roles)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+        var role = jsonToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+
+        return roles.Contains(role.ToLower());
+    }
 }
 
 

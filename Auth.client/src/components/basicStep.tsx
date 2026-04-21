@@ -3,7 +3,7 @@ import { StepLayout } from "./stepLayout";
 
 type LoginResult = {
   email: string;
-  password: string;
+  originalPassword: string;
   hashedPassword: string;
 };
 
@@ -12,6 +12,7 @@ export function BasicStep() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [loginResult, setLoginResult] = useState<LoginResult | null>(null);
   const [requestBody, setRequestBody] = useState("");
 
@@ -28,18 +29,29 @@ export function BasicStep() {
     });
 
     const data = await res.json();
-    setLoginResult(data);
+
+    setLoginResult({
+      email: data.email,
+      originalPassword: data.password,
+      hashedPassword: data.hashedPassword,
+    });
+
+    // small delay for UX clarity
+    await new Promise((r) => setTimeout(r, 400));
 
     setStep(2);
   };
+
+  const next = () => setStep((s) => Math.min(s + 1, 5));
+  const back = () => setStep((s) => Math.max(s - 1, 1));
 
   return (
     <StepLayout
       title="Grundläggande inloggning"
       step={step}
       maxStep={5}
-      onNext={() => setStep((s) => s + 1)}
-      onBack={() => setStep((s) => s - 1)}
+      onNext={next}
+      onBack={back}
     >
       {/* STEP 1 */}
       {step === 1 && (
@@ -59,7 +71,12 @@ export function BasicStep() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button onClick={handleLogin}>Logga in</button>
+          <button
+            onClick={handleLogin}
+            disabled={!email || !password}
+          >
+            Logga in
+          </button>
         </>
       )}
 
@@ -76,7 +93,11 @@ ${requestBody}`}
           </pre>
 
           <p>
-            Här skickas lösenordet direkt till servern för validering.
+            Här skickas email och lösenord direkt till servern.
+          </p>
+
+          <p>
+            Detta är nödvändigt för att verifiera användaren.
           </p>
         </>
       )}
@@ -84,16 +105,17 @@ ${requestBody}`}
       {/* STEP 3 */}
       {step === 3 && (
         <>
-          <h3>Databas (osäkert)</h3>
+          <h3>Problem: Lösenord i databasen</h3>
 
           <pre className="code-block">
             {`User:
 Email: ${loginResult?.email}
-Password: ${loginResult?.password} ❌`}
+Password: ${loginResult?.originalPassword} ❌`}
           </pre>
 
           <p>
-            Om databasen läcker får en angripare tillgång till riktiga lösenord.
+            Om lösenord sparas i klartext och databasen läcker,
+            kan angripare direkt läsa alla användares lösenord.
           </p>
         </>
       )}
@@ -101,7 +123,7 @@ Password: ${loginResult?.password} ❌`}
       {/* STEP 4 */}
       {step === 4 && (
         <>
-          <h3>Hashning</h3>
+          <h3>Lösning: Hashning</h3>
 
           <pre className="code-block">
             {`User:
@@ -110,8 +132,12 @@ PasswordHash: ${loginResult?.hashedPassword}`}
           </pre>
 
           <p>
-            Istället för lösenord sparas en hash.
-            Det gör det mycket svårare att återställa lösenordet.
+            Istället för att lagra lösenordet skapas en hash.
+          </p>
+
+          <p>
+            En hash går inte att omvandla tillbaka till originalet,
+            vilket gör dataläckor mycket mindre farliga.
           </p>
         </>
       )}
@@ -119,26 +145,26 @@ PasswordHash: ${loginResult?.hashedPassword}`}
       {/* STEP 5 */}
       {step === 5 && (
         <>
-          <h3>Problemet kvarstår</h3>
+          <h3>Problem kvarstår</h3>
 
           <pre className="code-block">
             {`GET /api/data
 {
   "email": "${loginResult?.email}",
-  "password": "${loginResult?.password}"
+  "password": "${loginResult?.originalPassword}"
 }`}
           </pre>
 
           <p>
-            Lösenordet måste fortfarande skickas vid varje request.
+            Varje request kräver fortfarande att lösenordet skickas igen.
           </p>
 
           <p>
-            Detta är osäkert → vi behöver något bättre.
+            Det betyder att lösenordet kontinuerligt färdas över nätverket.
           </p>
 
           <p>
-            Nästa steg: <strong>JWT (tokens)</strong>
+            Detta är osäkert → vi behöver ett bättre sätt att identifiera användaren.
           </p>
         </>
       )}

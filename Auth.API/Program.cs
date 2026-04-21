@@ -52,6 +52,7 @@ app.UseHttpsRedirection();
 app.MapBasicAuthEndpoints();
 app.MapJwtAuthEndpoints();
 app.MapRefreshAuthEndpoints();
+app.MapRolesAuthEndpoints();
 
 app.Run();
 

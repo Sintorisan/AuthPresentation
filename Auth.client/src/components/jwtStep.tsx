@@ -3,9 +3,21 @@ import { StepLayout } from "./stepLayout";
 
 const API = "http://localhost:5136/api/v2";
 
+type JwtHeader = {
+  alg: string;
+  typ: string;
+};
+
+type JwtPayload = {
+  email?: string;
+  exp?: number;
+  iat?: number;
+  [key: string]: unknown;
+};
+
 type DecodedToken = {
-  header: any;
-  payload: any;
+  header: JwtHeader;
+  payload: JwtPayload;
 };
 
 export function JwtStep() {
@@ -14,8 +26,8 @@ export function JwtStep() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [request, setRequest] = useState("");
-  const [response, setResponse] = useState("");
+  const [requestBody, setRequestBody] = useState("");
+  const [responseBody, setResponseBody] = useState("");
 
   const [token, setToken] = useState<string>();
   const [decoded, setDecoded] = useState<DecodedToken | null>(null);
@@ -26,27 +38,29 @@ export function JwtStep() {
   const [noExpStatus, setNoExpStatus] = useState("");
   const [expStatus, setExpStatus] = useState("");
 
+  const next = () => setStep((s) => Math.min(s + 1, 9));
+  const back = () => setStep((s) => Math.max(s - 1, 1));
+
   // 🔹 Decode JWT
-  const decodeFullJwt = (token: string): DecodedToken => {
+  const decodeJwt = (token: string): DecodedToken => {
     const [header, payload] = token.split(".");
 
-    const decode = (part: string) => {
+    const decodePart = (part: string) => {
       const base64 = part.replace(/-/g, "+").replace(/_/g, "/");
       const padded = base64.padEnd(base64.length + ((4 - base64.length % 4) % 4), "=");
       return JSON.parse(atob(padded));
     };
 
     return {
-      header: decode(header),
-      payload: decode(payload),
+      header: decodePart(header),
+      payload: decodePart(payload),
     };
   };
 
-  // 🔹 Login (real)
+  // 🔹 Login
   const handleLogin = async () => {
     const body = JSON.stringify({ email, password }, null, 2);
-
-    setRequest(`POST /api/v2/auth/exp-login\nContent-Type: application/json\n\n${body}`);
+    setRequestBody(body);
 
     const res = await fetch(`${API}/auth/exp-login`, {
       method: "POST",
@@ -58,15 +72,15 @@ export function JwtStep() {
 
     const data = await res.json();
 
-    setResponse(`HTTP ${res.status}\n\n${JSON.stringify(data, null, 2)}`);
-
+    setResponseBody(JSON.stringify(data, null, 2));
     setToken(data.token);
-    setDecoded(decodeFullJwt(data.token));
+    setDecoded(decodeJwt(data.token));
 
-    setStep(5);
+    await new Promise((r) => setTimeout(r, 400));
+    next();
   };
 
-  // 🔹 Generate tokens for comparison
+  // 🔹 Generate tokens (exp vs no exp)
   const generateTokens = async () => {
     const body = JSON.stringify({ email, password });
 
@@ -91,10 +105,7 @@ export function JwtStep() {
   };
 
   // 🔹 Call API
-  const callProtectedApi = async (
-    token: string | undefined,
-    setter: (s: string) => void
-  ) => {
+  const callApiWithExpiration = async (token: string | undefined, setter: (s: string) => void) => {
     if (!token) return;
 
     const res = await fetch(`${API}/auth/protected`, {
@@ -106,11 +117,7 @@ export function JwtStep() {
     setter(`${res.status} ${res.statusText}`);
   };
 
-
-  const callNonProtectedApi = async (
-    token: string | undefined,
-    setter: (s: string) => void
-  ) => {
+  const callApiWithoutExpiration = async (token: string | undefined, setter: (s: string) => void) => {
     if (!token) return;
 
     const res = await fetch(`${API}/auth/protected-no-exp`, {
@@ -122,16 +129,14 @@ export function JwtStep() {
     setter(`${res.status} ${res.statusText}`);
   };
 
-
   return (
     <StepLayout
       title="JWT & HTTPS"
       step={step}
       maxStep={9}
-      onNext={() => setStep((s) => s + 1)}
-      onBack={() => setStep((s) => s - 1)}
+      onNext={next}
+      onBack={back}
     >
-
       {/* STEP 1 */}
       {step === 1 && (
         <>
@@ -145,8 +150,8 @@ export function JwtStep() {
 }`}
           </pre>
 
-          <p>Lösenord skickas över nätverket.</p>
-          <p>En angripare kan fånga upp requesten (man-in-the-middle).</p>
+          <p>Varje request innehåller lösenordet.</p>
+          <p>Om trafiken fångas upp kan känslig data läcka.</p>
         </>
       )}
 
@@ -160,10 +165,10 @@ export function JwtStep() {
 a8f3k2l9fj2...93jf0as...`}
           </pre>
 
-          <p>HTTPS krypterar trafiken.</p>
-          <p>Angriparen ser bara krypterad data.</p>
+          <p>HTTPS krypterar trafiken mellan klient och server.</p>
+          <p>Angriparen kan inte läsa innehållet.</p>
 
-          <p><strong>Men vi skickar fortfarande lösenordet.</strong></p>
+          <p><strong>Men lösenordet skickas fortfarande varje gång.</strong></p>
         </>
       )}
 
@@ -173,8 +178,7 @@ a8f3k2l9fj2...93jf0as...`}
           <h3>Lösning: Token</h3>
 
           <p>
-            Istället för att skicka lösenordet varje gång,
-            kan servern ge oss en token.
+            Servern kan istället ge en token som bevis på att användaren är inloggad.
           </p>
 
           <pre className="code-block">
@@ -202,7 +206,9 @@ a8f3k2l9fj2...93jf0as...`}
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button onClick={handleLogin}>Logga in</button>
+          <button onClick={handleLogin} disabled={!email || !password}>
+            Logga in
+          </button>
         </>
       )}
 
@@ -211,8 +217,16 @@ a8f3k2l9fj2...93jf0as...`}
         <>
           <h3>Request & Response</h3>
 
-          <pre className="code-block">{request}</pre>
-          <pre className="code-block">{response}</pre>
+          <pre className="code-block">
+            {`POST /api/v2/auth/exp-login
+Content-Type: application/json
+
+${requestBody}`}
+          </pre>
+
+          <pre className="code-block">
+            {responseBody}
+          </pre>
         </>
       )}
 
@@ -235,9 +249,8 @@ a8f3k2l9fj2...93jf0as...`}
             {JSON.stringify(decoded.payload, null, 2)}
           </pre>
 
-          <p>Header = hur tokenen är signerad</p>
-          <p>Payload = information om användaren</p>
-          <p>Signature = serverns sätt att verifiera att tokenen inte har ändrats</p>
+          <p>JWT består av Header, Payload och Signature.</p>
+          <p>Payload innehåller information om användaren.</p>
         </>
       )}
 
@@ -251,7 +264,8 @@ a8f3k2l9fj2...93jf0as...`}
 Authorization: Bearer eyJhbGciOi...`}
           </pre>
 
-          <p>Servern verifierar token istället för lösenord.</p>
+          <p>Token skickas istället för lösenord.</p>
+          <p>Servern verifierar tokenen.</p>
         </>
       )}
 
@@ -260,35 +274,37 @@ Authorization: Bearer eyJhbGciOi...`}
         <>
           <h3>Problem: Token livslängd</h3>
 
-          <p>Om token inte går ut → farligt.</p>
-          <p>Om den stjäls → full access.</p>
+          <p>
+            Om en token aldrig går ut och blir stulen,
+            kan den användas för alltid.
+          </p>
 
-          <button onClick={generateTokens}>Generera tokens</button>
+          <button onClick={generateTokens}>
+            Generera tokens
+          </button>
 
           <div className="split">
-
             <div className="card">
-              <h4>Utan expiration ❌</h4>
+              <h4>Ingen expiration ❌</h4>
 
-              <button onClick={() => callNonProtectedApi(noExpToken, setNoExpStatus)}>
+              <button onClick={() => callApiWithoutExpiration(noExpToken, setNoExpStatus)}>
                 Testa API
               </button>
 
               <p>{noExpStatus}</p>
-              <p>Fungerar för alltid.</p>
+              <p>Fungerar alltid.</p>
             </div>
 
             <div className="card">
               <h4>Med expiration ✔</h4>
 
-              <button onClick={() => callProtectedApi(expToken, setExpStatus)}>
+              <button onClick={() => callApiWithExpiration(expToken, setExpStatus)}>
                 Testa API
               </button>
 
               <p>{expStatus}</p>
               <p>Slutar fungera efter tid.</p>
             </div>
-
           </div>
         </>
       )}
@@ -305,12 +321,10 @@ Authorization: Bearer eyJhbGciOi...`}
           <p>Användaren måste logga in igen.</p>
 
           <p>
-            Hur löser vi detta utan att störa användaren?
+            Hur behåller vi säkerheten utan att störa användaren?
           </p>
-
         </>
       )}
-
     </StepLayout>
   );
 }

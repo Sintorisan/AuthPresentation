@@ -14,9 +14,13 @@ export function RefreshStep() {
 
   const [statusMessages, setStatusMessages] = useState<string[]>([]);
 
-  const delay = (ms: number) =>
-    new Promise(resolve => setTimeout(resolve, ms));
+  const next = () => setStep((s) => Math.min(s + 1, 6));
+  const back = () => setStep((s) => Math.max(s - 1, 1));
 
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  // 🔹 Login
   const handleLogin = async () => {
     const res = await fetch(`${API}/auth/login`, {
       method: "POST",
@@ -31,9 +35,11 @@ export function RefreshStep() {
     setAccessToken(data.accessToken);
     setRefreshToken(data.refreshToken);
 
-    setStep(4);
+    await delay(400);
+    next();
   };
 
+  // 🔹 Call API (simulates session flow)
   const callApi = async () => {
     if (!accessToken) return;
 
@@ -46,28 +52,30 @@ export function RefreshStep() {
     });
 
     if (res.status === 200) {
-      setStatusMessages(prev => [
+      setStatusMessages((prev) => [
         ...prev,
-        `${res.status} ${res.statusText}, perfekt! Access tokenen är fortfarande giltig!`,
+        `${res.status} ${res.statusText}, access token är fortfarande giltig`,
       ]);
+      return;
     }
 
     if (res.status === 401) {
-      setStatusMessages(prev => [
+      setStatusMessages((prev) => [
         ...prev,
-        `${res.status} ${res.statusText}, oh nej! Tokenen har gått ut!`,
+        `${res.status} ${res.statusText}, access token har gått ut`,
       ]);
 
-      await refresh();
+      await handleRefresh();
     }
   };
 
-  const refresh = async () => {
-    await delay(1200);
+  // 🔹 Refresh flow
+  const handleRefresh = async () => {
+    await delay(1000);
 
-    setStatusMessages(prev => [
+    setStatusMessages((prev) => [
       ...prev,
-      "Vi försöker använda refresh token...",
+      "Försöker använda refresh token...",
     ]);
 
     const res = await fetch(`${API}/auth/refresh`, {
@@ -79,25 +87,44 @@ export function RefreshStep() {
     });
 
     if (res.status === 200) {
-      await delay(1200);
+      const data = await res.json();
 
-      setStatusMessages(prev => [
+      await delay(1000);
+
+      setAccessToken(data.accessToken);
+
+      setStatusMessages((prev) => [
         ...prev,
-        `${res.status} ${res.statusText}, ny access token skapad ✔`,
+        `${res.status} ${res.statusText}, ny access token skapad`,
+        "Försöker igen med ny token...",
       ]);
 
-      const data = await res.json();
-      setAccessToken(data.accessToken);
+      await retryWithNewToken(data.accessToken);
+      return;
     }
 
     if (res.status === 401) {
-      await delay(1200);
+      await delay(1000);
 
-      setStatusMessages(prev => [
+      setStatusMessages((prev) => [
         ...prev,
-        `${res.status} ${res.statusText}, refresh token ogiltig → logga in igen`,
+        `${res.status} ${res.statusText}, refresh token ogiltig`,
+        "Användaren måste logga in igen",
       ]);
     }
+  };
+
+  const retryWithNewToken = async (newToken: string) => {
+    const res = await fetch(`${API}/auth/protected`, {
+      headers: {
+        Authorization: `Bearer ${newToken}`,
+      },
+    });
+
+    setStatusMessages((prev) => [
+      ...prev,
+      `${res.status} ${res.statusText}, request lyckades`,
+    ]);
   };
 
   return (
@@ -105,23 +132,22 @@ export function RefreshStep() {
       title="Refresh Token"
       step={step}
       maxStep={6}
-      onNext={() => setStep((s) => s + 1)}
-      onBack={() => setStep((s) => s - 1)}
+      onNext={next}
+      onBack={back}
     >
-
       {/* STEP 1 */}
       {step === 1 && (
         <>
           <h3>Token har gått ut</h3>
 
           <pre className="code-block">
-            401 Unauthorized
+            {`401 Unauthorized`}
           </pre>
 
           <p>Access token är inte längre giltig.</p>
 
           <p>
-            Hur kan vi fortsätta utan att logga in igen?
+            Måste användaren logga in igen varje gång detta händer?
           </p>
         </>
       )}
@@ -132,7 +158,7 @@ export function RefreshStep() {
           <h3>Lösning: Refresh token</h3>
 
           <p>Access token → kort liv</p>
-          <p>Refresh token → långt liv</p>
+          <p>Refresh token → längre liv</p>
 
           <p>
             Refresh token används för att hämta en ny access token.
@@ -158,7 +184,9 @@ export function RefreshStep() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button onClick={handleLogin}>Logga in</button>
+          <button onClick={handleLogin} disabled={!email || !password}>
+            Logga in
+          </button>
         </>
       )}
 
@@ -175,7 +203,7 @@ export function RefreshStep() {
           </pre>
 
           <p>Access token används i API calls.</p>
-          <p>Refresh token sparas separat.</p>
+          <p>Refresh token används för att hämta en ny access token.</p>
         </>
       )}
 
@@ -184,10 +212,12 @@ export function RefreshStep() {
         <>
           <h3>Session i praktiken</h3>
 
-          <button onClick={callApi}>Call API</button>
+          <button onClick={callApi}>
+            Call API
+          </button>
 
-          {statusMessages.map((sm, i) => (
-            <p key={i}>{sm}</p>
+          {statusMessages.map((msg, i) => (
+            <p key={i}>{msg}</p>
           ))}
         </>
       )}
@@ -198,23 +228,18 @@ export function RefreshStep() {
           <h3>Nästa steg</h3>
 
           <p>
-            Nu kan vi hålla användaren inloggad på ett säkert sätt.
+            Användaren hålls inloggad utan att skriva in lösenord igen.
           </p>
 
           <p>
-            Men… vad får användaren faktiskt göra?
+            Men alla användare ska inte ha samma tillgång.
           </p>
 
           <p>
-            Ska alla ha tillgång till all data?
-          </p>
-
-          <p>
-            <strong>→ Nästa: Auktorisering (roller)</strong>
+            Hur styr vi vad en användare får göra?
           </p>
         </>
       )}
-
     </StepLayout>
   );
 }
