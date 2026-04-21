@@ -4,6 +4,7 @@ import { BasicStep } from "./components/basicStep";
 import { JwtStep } from "./components/jwtStep";
 import { RefreshStep } from "./components/refreshStep";
 import { AuthZStep } from "./components/authZStep";
+import { SecurityStep } from "./components/securityStep";
 
 type Page = {
   key: string;
@@ -17,7 +18,7 @@ const pages: Page[] = [
   { key: "jwt", label: "JWT", component: <JwtStep /> },
   { key: "refresh", label: "Refresh Token", component: <RefreshStep /> },
   { key: "authz", label: "Auktorisering", component: <AuthZStep /> },
-  { key: "security", label: "Säkerhet", component: <h2>Säkerhet</h2> },
+  { key: "security", label: "Säkerhet", component: <SecurityStep /> },
 ];
 
 function App() {
