@@ -20,7 +20,10 @@ export function StepLayout({
 
       {/* HEADER */}
       <div className="step-header">
-        <h2>{title}</h2>
+        <div className="step-heading">
+          <span className="step-kicker">Auth workshop</span>
+          <h2>{title}</h2>
+        </div>
         <span className="step-indicator">
           Steg {step} / {maxStep}
         </span>

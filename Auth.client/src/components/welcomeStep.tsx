@@ -9,23 +9,43 @@ export function WelcomeStep() {
       onNext={() => { }}
       onBack={() => { }}
     >
-      <p>
-        Den här applikationen visar hur autentisering fungerar steg för steg.
-      </p>
+      <div className="story-block">
+        <p className="eyebrow">Från inloggning till skyddat system</p>
+        <h3>Vi bygger säkerhet lager för lager.</h3>
+        <p>
+          Den här applikationen visar hur autentisering fungerar steg för steg:
+          först bevisar vi vem användaren är, sedan skyddar vi sessionen och
+          till sist styr vi vad användaren får göra.
+        </p>
+      </div>
 
-      <p>
-        Vi börjar med en enkel inloggning och bygger sedan vidare till säkrare lösningar.
-      </p>
+      <div className="flow-row">
+        <span className="flow-step">Lösenord</span>
+        <span className="flow-arrow">→</span>
+        <span className="flow-step">Hashning</span>
+        <span className="flow-arrow">→</span>
+        <span className="flow-step">JWT</span>
+        <span className="flow-arrow">→</span>
+        <span className="flow-step">Refresh token</span>
+        <span className="flow-arrow">→</span>
+        <span className="flow-step">Roller</span>
+        <span className="flow-arrow">→</span>
+        <span className="flow-step">Hotbild</span>
+      </div>
 
-      <div className="code-block">
-        {`Vad du kommer lära dig:
-
-1. Grundläggande inloggning
-2. Varför lösenord är känsliga
-3. Hashning
-4. JWT (tokens)
-5. Refresh tokens
-6. Auktorisering`}
+      <div className="mini-grid">
+        <div className="mini-card">
+          <h4>Identitet</h4>
+          <p>Hur vet servern vem användaren är?</p>
+        </div>
+        <div className="mini-card">
+          <h4>Session</h4>
+          <p>Hur håller vi användaren inloggad utan onödig risk?</p>
+        </div>
+        <div className="mini-card">
+          <h4>Åtkomst</h4>
+          <p>Hur avgör vi vilka resurser användaren får nå?</p>
+        </div>
       </div>
     </StepLayout>
   );

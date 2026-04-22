@@ -138,38 +138,58 @@ export function RefreshStep() {
       {/* STEP 1 */}
       {step === 1 && (
         <>
-          <h3>Token har gått ut</h3>
+          <div className="solution-block">
+            <p className="eyebrow">Svar på JWT-friktionen</p>
+            <h3>Refresh token låter sessionen fortsätta utan nytt lösenord</h3>
+            <p>
+              Access token får vara kortlivad för säkerhetens skull. När den
+              går ut kan klienten använda en refresh token för att få en ny.
+            </p>
+          </div>
 
           <pre className="code-block">
             {`401 Unauthorized`}
           </pre>
 
-          <p>Access token är inte längre giltig.</p>
-
-          <p>
-            Måste användaren logga in igen varje gång detta händer?
-          </p>
+          <span className="status-badge warning">Access token är inte längre giltig.</span>
         </>
       )}
 
       {/* STEP 2 */}
       {step === 2 && (
         <>
-          <h3>Lösning: Refresh token</h3>
+          <div className="comparison-grid">
+            <div className="card success">
+              <h4>Access token: kort liv</h4>
+              <p>Används i API anrop och begränsar skadan om den läcker.</p>
+            </div>
 
-          <p>Access token → kort liv</p>
-          <p>Refresh token → längre liv</p>
+            <div className="card success">
+              <h4>Refresh token: längre liv</h4>
+              <p>Används bara för att hämta en ny access token.</p>
+            </div>
+          </div>
 
-          <p>
-            Refresh token används för att hämta en ny access token.
-          </p>
+          <div className="flow-row">
+            <span className="flow-step">401</span>
+            <span className="flow-arrow">→</span>
+            <span className="flow-step">Refresh token</span>
+            <span className="flow-arrow">→</span>
+            <span className="flow-step">Ny access token</span>
+            <span className="flow-arrow">→</span>
+            <span className="flow-step">Request försöks igen</span>
+          </div>
         </>
       )}
 
       {/* STEP 3 */}
       {step === 3 && (
         <>
-          <h3>Logga in</h3>
+          <div className="demo-block">
+            <p className="eyebrow">Demo</p>
+            <h3>Logga in och hämta båda token-typerna</h3>
+            <p>Responsen innehåller både access token och refresh token.</p>
+          </div>
 
           <input
             placeholder="Email"
@@ -193,7 +213,10 @@ export function RefreshStep() {
       {/* STEP 4 */}
       {step === 4 && (
         <>
-          <h3>Login response</h3>
+          <div className="takeaway-block">
+            <p className="eyebrow">Två roller i sessionen</p>
+            <h3>En token för API-anrop, en token för förnyelse</h3>
+          </div>
 
           <pre className="code-block">
             {`{
@@ -202,42 +225,56 @@ export function RefreshStep() {
 }`}
           </pre>
 
-          <p>Access token används i API calls.</p>
-          <p>Refresh token används för att hämta en ny access token.</p>
+          <div className="badge-row">
+            <span className="status-badge protected">Access token används i API calls</span>
+            <span className="status-badge protected">Refresh token hämtar ny access token</span>
+          </div>
         </>
       )}
 
       {/* STEP 5 */}
       {step === 5 && (
         <>
-          <h3>Session i praktiken</h3>
+          <div className="demo-block">
+            <p className="eyebrow">Demo</p>
+            <h3>Session i praktiken</h3>
+            <p>
+              Testa flödet: först försöker vi med access token, sedan refreshar
+              vi om servern svarar 401.
+            </p>
+          </div>
 
           <button onClick={callApi}>
             Call API
           </button>
 
-          {statusMessages.map((msg, i) => (
-            <p key={i}>{msg}</p>
-          ))}
+          <div className="timeline">
+            {statusMessages.map((msg, i) => (
+              <div className="timeline-item" key={i}>
+                <span className="timeline-dot">{i + 1}</span>
+                <p>{msg}</p>
+              </div>
+            ))}
+          </div>
         </>
       )}
 
       {/* STEP 6 */}
       {step === 6 && (
         <>
-          <h3>Nästa steg</h3>
+          <div className="transition-block">
+            <p className="eyebrow">Handoff</p>
+            <h3>Nu är identiteten stabil, men behörigheten är fortfarande öppen.</h3>
+            <p>
+              Vi vet vem användaren är och kan hålla sessionen vid liv. Nästa
+              fråga är vad just den användaren faktiskt får göra.
+            </p>
+          </div>
 
-          <p>
-            Användaren hålls inloggad utan att skriva in lösenord igen.
-          </p>
-
-          <p>
-            Men alla användare ska inte ha samma tillgång.
-          </p>
-
-          <p>
-            Hur styr vi vad en användare får göra?
-          </p>
+          <div className="badge-row">
+            <span className="status-badge protected">Inloggad utan nytt lösenord</span>
+            <span className="status-badge warning">Olika användare behöver olika access</span>
+          </div>
         </>
       )}
     </StepLayout>

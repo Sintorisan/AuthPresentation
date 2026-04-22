@@ -18,38 +18,50 @@ export function SecurityStep() {
       {/* STEP 1 */}
       {step === 1 && (
         <>
-          <h3>Säkerhet i detta system</h3>
+          <div className="solution-block">
+            <p className="eyebrow">Capstone</p>
+            <h3>Nu kopplar vi varje lager till hotbilden</h3>
+            <p>
+              Login, JWT, refresh tokens och roller är inte separata trick.
+              Tillsammans bygger de ett system som kan stå emot flera typer av risk.
+            </p>
+          </div>
 
-          <p>
-            De lösningar vi har byggt hanterar specifika säkerhetsproblem.
-          </p>
+          <div className="security-grid">
+            <div className="mini-card">
+              <h4>Man-in-the-Middle</h4>
+              <p><strong>Skydd:</strong> HTTPS krypterar trafiken och skyddar data i transit.</p>
+            </div>
 
-          <h4>Man-in-the-Middle</h4>
-          <p><strong>Vad händer:</strong> Trafik kan avlyssnas mellan klient och server.</p>
-          <p><strong>Lösning:</strong> HTTPS krypterar trafiken → JWT-sidan</p>
-          <p><strong>Varför det spelar roll:</strong> Skyddar känslig data i transit.</p>
+            <div className="mini-card">
+              <h4>Token theft</h4>
+              <p><strong>Skydd:</strong> Kortlivade tokens begränsar skadan vid läckage.</p>
+            </div>
 
-          <h4>Token Theft</h4>
-          <p><strong>Vad händer:</strong> En stulen token ger åtkomst som användaren.</p>
-          <p><strong>Lösning:</strong> Kortlivade tokens → JWT-sidan</p>
-          <p><strong>Varför det spelar roll:</strong> Begränsar skadan vid läckage.</p>
+            <div className="mini-card">
+              <h4>Lång session</h4>
+              <p><strong>Skydd:</strong> Refresh tokens balanserar säkerhet och användarupplevelse.</p>
+            </div>
 
-          <h4>Långlivade sessioner</h4>
-          <p><strong>Vad händer:</strong> En token fungerar för alltid om den inte går ut.</p>
-          <p><strong>Lösning:</strong> Refresh tokens → Refresh-sidan</p>
-          <p><strong>Varför det spelar roll:</strong> Balanserar säkerhet och användarupplevelse.</p>
-
-          <h4>Obehörig åtkomst</h4>
-          <p><strong>Vad händer:</strong> Användare får tillgång till fel data.</p>
-          <p><strong>Lösning:</strong> Roller och auktorisering → AuthZ-sidan</p>
-          <p><strong>Varför det spelar roll:</strong> Skyddar känsliga resurser.</p>
+            <div className="mini-card">
+              <h4>Obehörig åtkomst</h4>
+              <p><strong>Skydd:</strong> Roller och backend-kontroller skyddar känsliga resurser.</p>
+            </div>
+          </div>
         </>
       )}
 
       {/* STEP 2 */}
       {step === 2 && (
         <>
-          <h3>Vanliga säkerhetshot</h3>
+          <div className="takeaway-block">
+            <p className="eyebrow">Bredare hotbild</p>
+            <h3>Vanliga säkerhetshot</h3>
+            <p>
+              Auth-lagren är viktiga, men ett säkert system behöver även skydd
+              för nätverk, input, webbläsare och systemdesign.
+            </p>
+          </div>
 
           <h4>🌐 Nätverk</h4>
 
@@ -157,20 +169,28 @@ export function SecurityStep() {
       {/* STEP 3 */}
       {step === 3 && (
         <>
-          <h3>Sammanfattning</h3>
+          <div className="takeaway-block">
+            <p className="eyebrow">Sammanfattning</p>
+            <h3>Säkerhet byggs i lager</h3>
+            <p>
+              Ingen enskild lösning räcker. Varje lager tar bort en viss risk
+              och gör nästa lager enklare att lita på.
+            </p>
+          </div>
 
-          <p>Säkerhet byggs i lager.</p>
+          <div className="flow-row">
+            <span className="flow-step">HTTPS skyddar trafik</span>
+            <span className="flow-arrow">→</span>
+            <span className="flow-step">JWT hanterar identitet</span>
+            <span className="flow-arrow">→</span>
+            <span className="flow-step">Refresh token hanterar session</span>
+            <span className="flow-arrow">→</span>
+            <span className="flow-step">Roller styr åtkomst</span>
+          </div>
 
-          <p>Ingen enskild lösning räcker:</p>
-
-          <p>✔ HTTPS skyddar trafik</p>
-          <p>✔ JWT hanterar identitet</p>
-          <p>✔ Refresh tokens hanterar session</p>
-          <p>✔ Roller styr åtkomst</p>
-
-          <p>
-            Tillsammans skapar de ett säkrare system.
-          </p>
+          <div className="solution-block">
+            <p>Tillsammans skapar de ett säkrare system.</p>
+          </div>
         </>
       )}
     </StepLayout>

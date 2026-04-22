@@ -140,7 +140,14 @@ export function JwtStep() {
       {/* STEP 1 */}
       {step === 1 && (
         <>
-          <h3>Problemet</h3>
+          <div className="solution-block">
+            <p className="eyebrow">Svar på förra steget</p>
+            <h3>Token blir beviset på att användaren redan är verifierad</h3>
+            <p>
+              Lösenordet ska bara behövas vid login. Efter det vill vi skicka ett bevis
+              som servern kan verifiera utan att lösenordet följer med varje gång.
+            </p>
+          </div>
 
           <pre className="code-block">
             {`POST /login
@@ -150,48 +157,70 @@ export function JwtStep() {
 }`}
           </pre>
 
-          <p>Varje request innehåller lösenordet.</p>
-          <p>Om trafiken fångas upp kan känslig data läcka.</p>
+          <div className="problem-block">
+            <p>Om lösenordet återanvänds som identitetsbevis blir varje request känslig.</p>
+          </div>
         </>
       )}
 
       {/* STEP 2 */}
       {step === 2 && (
         <>
-          <h3>HTTPS</h3>
+          <div className="demo-block">
+            <p className="eyebrow">Transportskydd</p>
+            <h3>HTTPS skyddar resan mellan klient och server</h3>
+            <p>
+              Kryptering gör att någon på nätverket inte kan läsa innehållet i
+              requesten. Det löser avlyssning, men inte sessiondesignen.
+            </p>
+          </div>
 
           <pre className="code-block">
             {`POST /login 🔒
 a8f3k2l9fj2...93jf0as...`}
           </pre>
 
-          <p>HTTPS krypterar trafiken mellan klient och server.</p>
-          <p>Angriparen kan inte läsa innehållet.</p>
-
-          <p><strong>Men lösenordet skickas fortfarande varje gång.</strong></p>
+          <span className="status-badge warning">Men lösenordet skickas fortfarande varje gång.</span>
         </>
       )}
 
       {/* STEP 3 */}
       {step === 3 && (
         <>
-          <h3>Lösning: Token</h3>
-
-          <p>
-            Servern kan istället ge en token som bevis på att användaren är inloggad.
-          </p>
+          <div className="solution-block">
+            <p className="eyebrow">Sessionbevis</p>
+            <h3>Servern utfärdar en token efter lyckad login</h3>
+            <p>
+              Tokenen blir ett signerat kvitto. Klienten kan visa den i
+              kommande requests och servern kan verifiera att den är äkta.
+            </p>
+          </div>
 
           <pre className="code-block">
             {`POST /login
 → { "token": "eyJhbGciOi..." }`}
           </pre>
+
+          <div className="flow-row">
+            <span className="flow-step">Login</span>
+            <span className="flow-arrow">→</span>
+            <span className="flow-step">Server verifierar</span>
+            <span className="flow-arrow">→</span>
+            <span className="flow-step">Token skapas</span>
+            <span className="flow-arrow">→</span>
+            <span className="flow-step">Token används</span>
+          </div>
         </>
       )}
 
       {/* STEP 4 */}
       {step === 4 && (
         <>
-          <h3>Logga in</h3>
+          <div className="demo-block">
+            <p className="eyebrow">Demo</p>
+            <h3>Logga in och hämta en JWT</h3>
+            <p>Den här endpointen svarar med en token som innehåller identitetsdata.</p>
+          </div>
 
           <input
             placeholder="Email"
@@ -215,7 +244,10 @@ a8f3k2l9fj2...93jf0as...`}
       {/* STEP 5 */}
       {step === 5 && (
         <>
-          <h3>Request & Response</h3>
+          <div className="demo-block">
+            <p className="eyebrow">Utbyte</p>
+            <h3>Requesten skickar credentials, responsen skickar token</h3>
+          </div>
 
           <pre className="code-block">
             {`POST /api/v2/auth/exp-login
@@ -233,7 +265,14 @@ ${requestBody}`}
       {/* STEP 6 */}
       {step === 6 && decoded && token && (
         <>
-          <h3>JWT struktur</h3>
+          <div className="takeaway-block">
+            <p className="eyebrow">Inuti tokenen</p>
+            <h3>JWT består av header, payload och signature</h3>
+            <p>
+              Payload berättar vem användaren är. Signaturen gör att servern
+              kan upptäcka om tokenen har ändrats.
+            </p>
+          </div>
 
           <pre className="code-block">
             {token.split(".").join("\n")}
@@ -248,55 +287,58 @@ ${requestBody}`}
           <pre className="code-block">
             {JSON.stringify(decoded.payload, null, 2)}
           </pre>
-
-          <p>JWT består av Header, Payload och Signature.</p>
-          <p>Payload innehåller information om användaren.</p>
         </>
       )}
 
       {/* STEP 7 */}
       {step === 7 && (
         <>
-          <h3>Använd token</h3>
+          <div className="solution-block">
+            <p className="eyebrow">Resultat</p>
+            <h3>Nu skickas token istället för lösenord</h3>
+            <p>
+              Servern verifierar tokenen och kan hantera requesten utan att
+              användaren behöver skriva in lösenordet igen.
+            </p>
+          </div>
 
           <pre className="code-block">
             {`GET /api/data
 Authorization: Bearer eyJhbGciOi...`}
           </pre>
-
-          <p>Token skickas istället för lösenord.</p>
-          <p>Servern verifierar tokenen.</p>
         </>
       )}
 
       {/* STEP 8 */}
       {step === 8 && (
         <>
-          <h3>Problem: Token livslängd</h3>
-
-          <p>
-            Om en token aldrig går ut och blir stulen,
-            kan den användas för alltid.
-          </p>
+          <div className="problem-block">
+            <p className="eyebrow">Ny tradeoff</p>
+            <h3>En token måste också ha en livslängd</h3>
+            <p>
+              Om en token aldrig går ut och blir stulen kan den användas för
+              alltid. Kort livslängd begränsar skadan.
+            </p>
+          </div>
 
           <button onClick={generateTokens}>
             Generera tokens
           </button>
 
           <div className="split">
-            <div className="card">
-              <h4>Ingen expiration ❌</h4>
+            <div className="card danger">
+              <h4>Problem: ingen expiration</h4>
 
               <button onClick={() => callApiWithoutExpiration(noExpToken, setNoExpStatus)}>
                 Testa API
               </button>
 
               <p>{noExpStatus}</p>
-              <p>Fungerar alltid.</p>
+              <p>En stulen token fortsätter fungera.</p>
             </div>
 
-            <div className="card">
-              <h4>Med expiration ✔</h4>
+            <div className="card success">
+              <h4>Lösning: med expiration</h4>
 
               <button onClick={() => callApiWithExpiration(expToken, setExpStatus)}>
                 Testa API
@@ -312,17 +354,18 @@ Authorization: Bearer eyJhbGciOi...`}
       {/* STEP 9 */}
       {step === 9 && (
         <>
-          <h3>Nytt problem</h3>
+          <div className="transition-block">
+            <p className="eyebrow">Handoff</p>
+            <h3>Kortlivade tokens skyddar oss, men skapar friktion.</h3>
+            <p>
+              När access token går ut får användaren logga in igen.
+              Nästa lager löser sessionen utan att göra tokenen farligt långlivad.
+            </p>
+          </div>
 
           <pre className="code-block">
             401 Unauthorized (token expired)
           </pre>
-
-          <p>Användaren måste logga in igen.</p>
-
-          <p>
-            Hur behåller vi säkerheten utan att störa användaren?
-          </p>
         </>
       )}
     </StepLayout>

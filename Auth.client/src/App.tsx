@@ -55,6 +55,19 @@ function App() {
         </button>
       </nav>
 
+      <div className="section-tabs" aria-label="Presentation sections">
+        {pages.map((page, index) => (
+          <button
+            className={index === pageIndex ? "section-tab active" : "section-tab"}
+            key={page.key}
+            onClick={() => setPageIndex(index)}
+          >
+            <span>{index + 1}</span>
+            {page.label}
+          </button>
+        ))}
+      </div>
+
       {/* CONTENT */}
       <main className="page-container">
         <div className="page-inner">

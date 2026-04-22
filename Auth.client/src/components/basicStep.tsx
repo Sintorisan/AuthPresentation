@@ -56,7 +56,14 @@ export function BasicStep() {
       {/* STEP 1 */}
       {step === 1 && (
         <>
-          <h3>Logga in</h3>
+          <div className="story-block">
+            <p className="eyebrow">Startpunkt</p>
+            <h3>Logga in med email och lösenord</h3>
+            <p>
+              Första lagret är enkelt: klienten skickar uppgifter, servern
+              kontrollerar dem och svarar med vad den vet om användaren.
+            </p>
+          </div>
 
           <input
             placeholder="Email"
@@ -83,7 +90,14 @@ export function BasicStep() {
       {/* STEP 2 */}
       {step === 2 && (
         <>
-          <h3>HTTP Request</h3>
+          <div className="demo-block">
+            <p className="eyebrow">Demo</p>
+            <h3>HTTP requesten visar vad servern får</h3>
+            <p>
+              Det här är den nödvändiga kontrollpunkten: servern behöver se
+              lösenordet för att verifiera användaren.
+            </p>
+          </div>
 
           <pre className="code-block">
             {`POST /api/v1/auth/login
@@ -91,61 +105,63 @@ Content-Type: application/json
 
 ${requestBody}`}
           </pre>
-
-          <p>
-            Här skickas email och lösenord direkt till servern.
-          </p>
-
-          <p>
-            Detta är nödvändigt för att verifiera användaren.
-          </p>
         </>
       )}
 
       {/* STEP 3 */}
       {step === 3 && (
         <>
-          <h3>Problem: Lösenord i databasen</h3>
+          <div className="problem-block">
+            <p className="eyebrow">Risk</p>
+            <h3>Problemet uppstår om lösenordet lagras i klartext</h3>
+            <p>
+              Om databasen läcker kan angriparen direkt läsa alla lösenord och
+              testa dem på andra tjänster t.ex.
+            </p>
+          </div>
 
           <pre className="code-block">
             {`User:
 Email: ${loginResult?.email}
 Password: ${loginResult?.originalPassword} ❌`}
           </pre>
-
-          <p>
-            Om lösenord sparas i klartext och databasen läcker,
-            kan angripare direkt läsa alla användares lösenord.
-          </p>
         </>
       )}
 
       {/* STEP 4 */}
       {step === 4 && (
         <>
-          <h3>Lösning: Hashning</h3>
+          <div className="solution-block">
+            <p className="eyebrow">Lösning</p>
+            <h3>Hashning</h3>
+            <p>
+              Istället för lösenordet, sparas ett krypterat resultat. Servern kan
+              jämföra hashvärden utan att behöva lagra originalet.
+            </p>
+          </div>
 
           <pre className="code-block">
             {`User:
 Email: ${loginResult?.email}
 PasswordHash: ${loginResult?.hashedPassword}`}
           </pre>
-
-          <p>
-            Istället för att lagra lösenordet skapas en hash.
-          </p>
-
-          <p>
-            En hash går inte att omvandla tillbaka till originalet,
-            vilket gör dataläckor mycket mindre farliga.
-          </p>
         </>
       )}
 
       {/* STEP 5 */}
       {step === 5 && (
         <>
-          <h3>Problem kvarstår</h3>
+          <div className="comparison-grid">
+            <div className="card danger">
+              <h4>Problem: lösenord i varje request</h4>
+              <p>Identiteten bevisas om och om igen med samma känsliga information.</p>
+            </div>
+
+            <div className="card success">
+              <h4>Lösning: bevis på inloggning</h4>
+              <p>Efter login vill vi skicka ett tidsbegränsat bevis istället.</p>
+            </div>
+          </div>
 
           <pre className="code-block">
             {`GET /api/data
@@ -155,17 +171,14 @@ PasswordHash: ${loginResult?.hashedPassword}`}
 }`}
           </pre>
 
-          <p>
-            Varje request kräver fortfarande att lösenordet skickas igen.
-          </p>
-
-          <p>
-            Det betyder att lösenordet kontinuerligt färdas över nätverket.
-          </p>
-
-          <p>
-            Detta är osäkert → vi behöver ett bättre sätt att identifiera användaren.
-          </p>
+          <div className="transition-block">
+            <p className="eyebrow">Handoff</p>
+            <h3>Vi behöver ett bevis på login, inte lösenordet igen.</h3>
+            <p>
+              Nästa steg är att låta servern utfärda en token som klienten kan
+              använda för att visa: jag är redan verifierad.
+            </p>
+          </div>
         </>
       )}
     </StepLayout>
