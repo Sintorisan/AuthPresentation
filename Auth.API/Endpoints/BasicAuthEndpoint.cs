@@ -27,6 +27,7 @@ public static class BasicAuthEndpoints
             {
                 return Results.Unauthorized();
             }
+
             var result = await auth.CreateV1Response(user);
             return Results.Ok(result);
         });

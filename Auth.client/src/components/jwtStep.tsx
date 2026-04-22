@@ -62,7 +62,7 @@ export function JwtStep() {
     const body = JSON.stringify({ email, password }, null, 2);
     setRequestBody(body);
 
-    const res = await fetch(`${API}/auth/exp-login`, {
+    const res = await fetch(`${API}/auth/non-exp/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -85,12 +85,12 @@ export function JwtStep() {
     const body = JSON.stringify({ email, password });
 
     const [noExpRes, expRes] = await Promise.all([
-      fetch(`${API}/auth/non-exp-login`, {
+      fetch(`${API}/auth/non-exp/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body,
       }),
-      fetch(`${API}/auth/exp-login`, {
+      fetch(`${API}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body,
@@ -120,7 +120,7 @@ export function JwtStep() {
   const callApiWithoutExpiration = async (token: string | undefined, setter: (s: string) => void) => {
     if (!token) return;
 
-    const res = await fetch(`${API}/auth/protected-no-exp`, {
+    const res = await fetch(`${API}/auth/non-exp/protected`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

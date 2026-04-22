@@ -23,7 +23,7 @@ public class AuthService
             Email = dto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
             Password = dto.Password,
-            Role = dto.Role ?? "User"
+            Role = dto.Role ?? "user"
         };
 
         await _userRepository.RegisterUserAsync(user);
@@ -35,7 +35,9 @@ public class AuthService
         var user = await _userRepository.GetUserByEmailAsync(dto.Email);
 
         if (user == null)
+        {
             return null;
+        }
 
         return IsCorrectPassword(dto.Password, user.PasswordHash) ? user : null;
     }

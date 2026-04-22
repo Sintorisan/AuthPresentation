@@ -10,14 +10,16 @@ public static class RolesAuthEndpoints
         var group = app.MapGroup("/api/v4");
 
         group.MapPost("auth/register", async (RegisterDto dto, AuthService auth) =>
+        {
+            if (auth.IsExistingUser(dto.Email))
             {
-                if (auth.IsExistingUser(dto.Email))
-                {
-                    return Results.BadRequest("Email already exisists.");
-                }
-                var result = await auth.RegisterAsync(dto);
-                return Results.Ok(result);
-            });
+                return Results.BadRequest("Email already exisists.");
+            }
+
+            var result = await auth.RegisterAsync(dto);
+
+            return Results.Ok(result);
+        });
 
         group.MapPost("/auth/login", async (LoginDto dto, AuthService auth, TokenService tokenService) =>
         {

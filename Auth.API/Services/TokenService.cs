@@ -40,7 +40,7 @@ public class TokenService
             claims: claims,
             signingCredentials: creds,
             expires: includeExp
-                ? DateTime.UtcNow.AddSeconds(10)
+                ? DateTime.UtcNow.AddSeconds(5)
                 : null
         );
 
@@ -141,7 +141,7 @@ public class TokenService
     {
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-        var role = jsonToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+        var role = jsonToken?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? "";
 
         return roles.Contains(role.ToLower());
     }

@@ -9,7 +9,7 @@ public static class JwtAuthEndpoints
     {
         var group = app.MapGroup("api/v2");
 
-        group.MapPost("/auth/non-exp-login", async (LoginDto dto, AuthService auth, TokenService jwt) =>
+        group.MapPost("/auth/non-exp/login", async (LoginDto dto, AuthService auth, TokenService jwt) =>
         {
             var user = await auth.ValidateUser(dto);
             if (user == null)
@@ -22,21 +22,22 @@ public static class JwtAuthEndpoints
             return Results.Ok(new { token });
         });
 
-        group.MapGet("/auth/protected-no-exp", (HttpContext ctx, TokenService jwt) =>
+        group.MapGet("/auth/non-exp/protected", (HttpContext ctx, TokenService jwt) =>
         {
             var authHeader = ctx.Request.Headers["Authorization"].FirstOrDefault();
 
             if (authHeader == null)
+            {
                 return Results.Unauthorized();
-
+            }
             var token = authHeader.Split(" ").Last();
 
             var isValid = jwt.ValidateToken(token, false);
 
-            return isValid ? Results.Ok("Valid (no exp)") : Results.Unauthorized();
+            return isValid ? Results.Ok("Valid") : Results.Unauthorized();
         });
 
-        group.MapPost("/auth/exp-login", async (LoginDto dto, AuthService auth, TokenService jwt) =>
+        group.MapPost("/auth/login", async (LoginDto dto, AuthService auth, TokenService jwt) =>
         {
             var user = await auth.ValidateUser(dto);
             if (user == null)
